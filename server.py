@@ -1,6 +1,7 @@
 import cherrypy
 import pymongo
 from pymongo import Connection
+from Cheetah.Template import Template
 
 connection = Connection()
 db = connection['meetme']
@@ -12,15 +13,28 @@ class Index(object):
         max_num = group["max"]
         cur_num = group["joined"]
         status = self.group_exist(group_name)
+        namespace = {"cur_num":cur_num,"max_num":max_num}
+        grouppage_t = open('grouppage.tmpl', 'r')
+        self.grouppage_template = grouppage_t.read()
+
         if status == 2:
+            namespace["full"] = 1
             #group full!
             dict_ll = self.get_lat_lng(group_name)
-            return str(dict_ll["lat"]) + str(dict_ll["lng"])
-        return "Group Page!"
+            namespace["map"] = dict_ll
+            return str(Template(self.grouppage_template, name_space))
+
+        else:
+            namespace["full"] = 0
+            namespace["map"] = None
+            return str(Template(self.grouppage_template, name_space))
+
     group.exposed = True
 
-    def form(self):
-        return "Form Page"
+    def index(self):
+        homepage_t = open('homepage.tmpl', 'r')
+        self.homepage_template = homepage_t.read()
+        return str(Template(self.homepage_template, name_space))
     form.exposed = True
 
     def add_member(self,group_name="",lat="",lng=""):
@@ -28,9 +42,10 @@ class Index(object):
         try:
             group_collection.update({"name":group_name},{"pos":{"$push":{"lat":lat,"lng":lng}},"$inc":{"joined":1}},safe=True)
         except pymongo.errors.OperationFailure:
-            pass
+            return False
         except:
-            pass
+            return False
+        return True
 
     def get_lat_lng(self,group_name=""):
         group_collection = db.Groups
