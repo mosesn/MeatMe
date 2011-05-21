@@ -1,5 +1,0 @@
-import cherrypy
-
-class Index(object):
-
-cherrypy.quickstart(Index())
