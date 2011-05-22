@@ -17,8 +17,8 @@ class Index(object):
         group_collection = db.Groups
         group = group_collection.find_one({"name":name})
 
-#        grouppage_t = open('grouppage.tmpl', 'r')
-#        self.grouppage_template = grouppage_t.read()
+        grouppage_t = open('grouppage.tmpl', 'r')
+        self.grouppage_template = grouppage_t.read()
 
         g_exist = self.group_exist(name)
         if g_exist > 0:
@@ -34,8 +34,8 @@ class Index(object):
 
                 namespace["full"] = 0
                 namespace["map"] = None
-                return "Group exists"
-#            return str(Template(self.grouppage_template, name_space))
+#                return "Group exists"
+                return str(Template(self.grouppage_template, namespace))
             elif g_exist == 2:
 
                 namespace["full"] = 1
@@ -48,8 +48,8 @@ class Index(object):
                     dicti = group["ll"]
                 namespace["map"] = dicti["ll"]
 
-                return req
-#            return str(Template(self.grouppage_template, name_space))
+#               return req
+                return str(Template(self.grouppage_template, namespace))
         elif g_exist == 0:
             #error page
             return "No group \"" + name + "\" exists"
@@ -97,7 +97,10 @@ class Index(object):
             return str(False)
         except:
             return str(False)
-        return str(True)
+        
+        group_t = open('group.tmpl', 'r')
+        self.group_template = group_t.read()
+        return str(Template(self.group_template, {"name":name}))        
     add.exposed = True
 
     def get_lat_lng(self,group = None):
@@ -136,12 +139,15 @@ class Index(object):
             except:
                 #error
                 return "something is really bad"
-            return "inserted correctly"
+        
+            group_t = open('group.tmpl', 'r')
+            self.group_template = group_t.read()
+            return str(Template(self.group_template, {"name":name}))
         elif g_exist > 0:
             #error page
             #group does exist (bad)
             #redirect to group page, tell error
-            return "group does not exist"
+            return "group already exists"
         elif g_exist == -1:
             #empty name
             return "Group is empty"
