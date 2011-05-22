@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>MeatMe</title>
+<title>MeetMe</title>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 <style type="text/css">
   html { height: 100% }
@@ -11,8 +11,10 @@
 <script type="text/javascript"
     src="http://maps.google.com/maps/api/js?sensor=true">
 </script>
+<script type="text/javascript"
+  src= "http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js">
+</script>
 <script type="text/javascript">
-
 var initialLocation;
 var lat;
 var lon;
@@ -35,6 +37,8 @@ function initialize() {
       map.setCenter(initialLocation);
     lat = position.coords.latitude;
     lon = position.coords.longitude;
+    //pass lat to url
+    window.location.href='lat/'+ lat + 'long' + lon; 
     }, function() {
       handleNoGeolocation(browserSupportFlag);
     });
@@ -47,6 +51,8 @@ function initialize() {
       map.setCenter(initialLocation);
     lat = position.latitude;
     lon = position.longitude;
+    //pass lat to url
+    window.location.href='lat/'+ lat + 'long' + lon; 
     }, function() {
       handleNoGeoLocation(browserSupportFlag);
     });
@@ -65,60 +71,42 @@ function initialize() {
       initialLocation = siberia;
     }
     map.setCenter(initialLocation);
-  }  
-  //submit button stuff
-  function submitFunction(i) {
-
-  //get post values
-  $('#myForm').submit(function() {
-  // get all the inputs into an array.
-  var $inputs = $('#myForm :input');
-
-    // not sure if you wanted this, but I thought I'd add it.
-    // get an associative array of just the values.
-    var values = {};
-    $inputs.each(function() {
-        values[this.name] = $(this).val();
-    });
-});
-
-  //pass lat to url
-  //new group
-  if (i == 0)
-    window.location.href='newgroup/lat'+ lat + 'long' + lon + 'group' + values[0] + 'number' + values[1];
-  //existing group
-  else
-    window.location.href='group/lat'+ lat + 'long' + lon + 'group' + values[0];
-  document.theForm.submit()
   }
 }
 
+/* attach a submit handler to the form */
+  $("#searchForm").submit(function(event) {
+
+    /* stop form from submitting normally */
+    event.preventDefault(); 
+        
+    /* get some values from elements on the page: */
+    var $form = $( this ),
+        term = $form.find( 'input[name="s"]' ).val(),
+        url = $form.attr( 'action' );
+
+    /* Send the data using post and put the results in a div */
+    $.post( url, { s: term },
+      function( data ) {
+          var content = $( data ).find( '#content' );
+          $( "#result" ).html( content );
+      }
+    );
+  });
+
 </script>
+
 <body>
-<!-- creates text field and submit button -->
+<!-- if statement to check if group is full or not -->
+<!-- display join page -->
+<!-- method to get cur num and other num -->
+<!-- creates join group button -->
+<form action="" method=GET>
+<input type="submit" value="Join Group!"></form>
 
-<form name="theForm" action="" method="get" onsubmit="return validateForm(this);">
-Enter group name:
-<br>
-<input type="text" name="group">
-<br>
-Enter number of group members:
-<br>
-<input type="text" name="number">
-<br>
-<input type="submit" value="submit" onclick="submitFunction(0)">
-</form>
 
-<HR>
+<!-- displays direction page -->
 
-<!-- creates text field and submit button -->
-<form name="theForm" action="" method="get" onsubmit="return validateForm(this);">
-Enter the group name you want to join:
-<br>
-<input type="text" name="groupname">
-<br>
-<input type="submit" value="submit" onclick="submitFunction(1)">
-</form>
+
 </body>
 </html>
-
