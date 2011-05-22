@@ -8,8 +8,7 @@ from Cheetah.Template import Template
 
 connection = Connection()
 db = connection['meetme']
-client = Client('p2R3QHMxH3xZV6SAgeTdb6sqrxG6Qk8f','XbF4sZxLyhNDMzjykHmVysbz
-YtnbEtCn')
+client = Client('p2R3QHMxH3xZV6SAgeTdb6sqrxG6Qk8f','XbF4sZxLyhNDMzjykHmVysbzYtnbEtCn')
 
 
 class Index(object):
@@ -85,7 +84,7 @@ class Index(object):
     def index(self):
         homepage_t = open('homepage.tmpl', 'r')
         self.homepage_template = homepage_t.read()
-        return str(Template(self.homepage_template, name_space))
+        return str(Template(self.homepage_template))
     index.exposed = True
 
     def add(self,name="",lat="",lng=""):

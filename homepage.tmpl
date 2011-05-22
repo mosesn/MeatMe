@@ -12,7 +12,6 @@
     src="http://maps.google.com/maps/api/js?sensor=true">
 </script>
 <script type="text/javascript">
-
 var initialLocation;
 var lat;
 var lon;
@@ -33,8 +32,9 @@ function initialize() {
     navigator.geolocation.getCurrentPosition(function(position) {
       initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
       map.setCenter(initialLocation);
-    lat = position.coords.latitude;
-    lon = position.coords.longitude;
+      
+       lat = position.coords.latitude;
+       lon = position.coords.longitude;
     }, function() {
       handleNoGeolocation(browserSupportFlag);
     });
@@ -45,8 +45,9 @@ function initialize() {
     geo.getCurrentPosition(function(position) {
       initialLocation = new google.maps.LatLng(position.latitude,position.longitude);
       map.setCenter(initialLocation);
-    lat = position.latitude;
-    lon = position.longitude;
+
+      lat = position.latitude;
+      lon = position.longitude;
     }, function() {
       handleNoGeoLocation(browserSupportFlag);
     });
@@ -65,60 +66,42 @@ function initialize() {
       initialLocation = siberia;
     }
     map.setCenter(initialLocation);
-  }  
-  //submit button stuff
-  function submitFunction(i) {
-
-  //get post values
-  $('#myForm').submit(function() {
-  // get all the inputs into an array.
-  var $inputs = $('#myForm :input');
-
-    // not sure if you wanted this, but I thought I'd add it.
-    // get an associative array of just the values.
-    var values = {};
-    $inputs.each(function() {
-        values[this.name] = $(this).val();
-    });
-});
-
-  //pass lat to url
-  //new group
-  if (i == 0)
-    window.location.href='newgroup/lat'+ lat + 'long' + lon + 'group' + values[0] + 'number' + values[1];
-  //existing group
-  else
-    window.location.href='group/lat'+ lat + 'long' + lon + 'group' + values[0];
-  document.theForm.submit()
   }
 }
+    function testResults (form){
+      var group = form.groupname.value;
+      var names = form.groupsize.value;
+      
+      //alert ("You typed: " + group + names + lat + lon);
+      window.location.href='new/?lat='+ lat + '&lng=' + lon + '&name=' + group + '&number=' + names;
+    }
+
+    function seegroup (form) {
+      var group = form.groupnames.value;
+      
+      //alert ("You typed: " + group + lat + lon);
+      window.location.href='group/?name=' + group;
+    }
 
 </script>
-<body>
-<!-- creates text field and submit button -->
-
-<form name="theForm" action="" method="get" onsubmit="return validateForm(this);">
-Enter group name:
-<br>
-<input type="text" name="group">
-<br>
+<body onload="initialize()">
+<FORM NAME="myform" ACTION="" METHOD="GET">
+Enter group name: <BR>
+<INPUT TYPE="text" NAME="groupname" VALUE=""><P>
 Enter number of group members:
 <br>
-<input type="text" name="number">
-<br>
-<input type="submit" value="submit" onclick="submitFunction(0)">
-</form>
+<INPUT TYPE="text" NAME="groupsize" VALUE=""><P>
+<INPUT TYPE="button" NAME="button" Value="Click" onClick="testResults(this.form)">
+</FORM>
 
 <HR>
-
-<!-- creates text field and submit button -->
-<form name="theForm" action="" method="get" onsubmit="return validateForm(this);">
-Enter the group name you want to join:
-<br>
-<input type="text" name="groupname">
-<br>
-<input type="submit" value="submit" onclick="submitFunction(1)">
-</form>
+<!-- creates text field and submit button-->
+<FORM NAME="dudeform" ACTION="" METHOD="GET">
+Enter group name: <BR>
+<INPUT TYPE="text" NAME="groupnames" VALUE=""><P>
+<INPUT TYPE="button" NAME="button" Value="Click" onClick="seegroup(this.form)">
+</FORM>
+<div id="map_canvas" style="width:0%; height:0%">  </div>
 </body>
 </html>
 
