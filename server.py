@@ -26,6 +26,7 @@ class Index(object):
             cur_num = group["joined"]
             namespace = {"cur_num":cur_num,"max_num":max_num}
             namespace["error"] = error
+            namespace["name"] = name
 
             if g_exist == 1:
 
