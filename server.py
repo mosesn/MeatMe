@@ -79,11 +79,12 @@ class Index(object):
         coords = req["geometry"]["coordinates"]
         lat, lng = coords[0] , coords[1]
         prop = req["properties"]
+        new_name = prop["name"]
         addr, city, state = prop["address"], prop["city"], prop["province"]
 
         group_collection = db.Groups
-        group_collection.update({"name":name},{"name":name,"joined":joined, "max":maxe, "pos":pos,"ll":{"lat":str(lat),"lng":str(lng)},"addr":addr, "city": city, "state":state, "finalized":1},upsert=True,safe=True)
-        return {"ll":{"lat":lat,"lng":lng},"addr":addr, "city": city, "state":state}
+        group_collection.update({"name":name},{"name":name,"joined":joined, "max":maxe, "pos":pos,"ll":{"lat":str(lat),"lng":str(lng),"name":new_name},"addr":addr, "city": city, "state":state, "finalized":1},upsert=True,safe=True)
+        return {"ll":{"lat":lat,"lng":lng,"name":new_name},"addr":addr, "city": city, "state":state}
 
 
     def index(self):
