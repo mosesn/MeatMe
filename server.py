@@ -37,15 +37,14 @@ class Index(object):
 #                return "Group exists"
                 return str(Template(self.grouppage_template, namespace))
             elif g_exist == 2:
-
                 namespace["full"] = 1
             #group full!
                 dicti = None
                 if not group["finalized"]:
                     
-                    dicti = self.set_final(name)
+                    dicti = self.set_final(group)
                 else:
-                    dicti = group["ll"]
+                    dicti = group
                 namespace["map"] = dicti["ll"]
 
 #               return req
@@ -70,7 +69,12 @@ class Index(object):
         dict_ll = self.get_lat_lng(group)
         lat = dict_ll["lat"]
         lng = dict_ll["lng"]
+        name = group["name"]
+        joined = group["joined"]
+        maxe = group["max"]
+        pos = group["pos"]
         
+
         req = client.places.search(lat,lng)[0].to_dict()
         coords = req["geometry"]["coordinates"]
         lat, lng = coords[0] , coords[1]
@@ -78,7 +82,7 @@ class Index(object):
         addr, city, state = prop["address"], prop["city"], prop["province"]
 
         group_collection = db.Groups
-        group_collection.update({"name":name},{"ll":{"lat":lat,"lng":lng},"addr":addr, "city": city, "state":state, "finalized":1},upsert=True,safe=True)
+        group_collection.update({"name":name},{"name":name,"joined":joined, "max":maxe, "pos":pos,"ll":{"lat":str(lat),"lng":str(lng)},"addr":addr, "city": city, "state":state, "finalized":1},upsert=True,safe=True)
         return {"ll":{"lat":lat,"lng":lng},"addr":addr, "city": city, "state":state}
 
 
@@ -92,7 +96,7 @@ class Index(object):
         group_collection = db.Groups
 #        return str(self.group_exist(name))
         try:
-            group_collection.update({"name":name},{"$push":{"pos":{"lat":lat,"lng":lng}},"$inc":{"joined":1}},safe=True)
+            group_collection.update({"name":name},{"$push":{"pos":{"lat":str(lat),"lng":str(lng)}},"$inc":{"joined":1}},safe=True)
         except pymongo.errors.OperationFailure:
             return str(False)
         except:
@@ -132,7 +136,7 @@ class Index(object):
             #group does not exist (good)
             group_collection = db.Groups
             try:
-                group_collection.insert({"name":name,"joined":1,"max":int(number),"pos":[{"lat":lat,"lng":lng}]},safe=True)
+                group_collection.insert({"name":name,"joined":1,"max":int(number),"pos":[{"lat":lat,"lng":lng}],"finalized":0},safe=True)
             except pymongo.errors.OperationFailure:
                 #error
                 return "insert fucked up"
